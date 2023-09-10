@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import SnakeGame from './SnakeGame'; // Предполагая, что SnakeGame.js находится в той же директории
 
 function App() {
   return (
@@ -35,6 +36,7 @@ export default function MyApp() {
     <div>
       <h1>Welcome to my app</h1>
       <MyButton />
+      <SnakeGame /> {/* Добавляем игру "Snake" в наше приложение */}
     </div>
   );
 }
