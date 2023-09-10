@@ -40,14 +40,14 @@
 body {
   font-family: 'Times New Roman', Times, serif;
   background-color: #443f3e;
-  background-image: url('castle.jpg');
+  /* background-image: url('castle.jpg'); */
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: #f4e4d3;
   margin: 0;
   padding: 0;
-  cursor: url('pngegg.png') 0 0, auto; 
+  /* cursor: url('pngegg.png') 0 0, auto;  */
 }
 
 .calendar {
