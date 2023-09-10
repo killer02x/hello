@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './SnakeGame.css';
 
 const boardSize = 30;
@@ -9,23 +9,29 @@ function SnakeGame() {
         x: Math.floor(Math.random() * boardSize),
         y: Math.floor(Math.random() * boardSize)
     });
-    const [direction, setDirection] = useState({ x: 0, y: 0 });
-    const [newDirection, setNewDirection] = useState({ x: 0, y: 0 });
+
+    const snakeRef = useRef(snake);
+    const directionRef = useRef({ x: 0, y: 0 });
+    const newDirectionRef = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        snakeRef.current = snake;
+    }, [snake]);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
             switch (e.key) {
                 case 'ArrowUp':
-                    if (direction.y === 0) setNewDirection({ x: 0, y: -1 });
+                    if (directionRef.current.y === 0) newDirectionRef.current = { x: 0, y: -1 };
                     break;
                 case 'ArrowDown':
-                    if (direction.y === 0) setNewDirection({ x: 0, y: 1 });
+                    if (directionRef.current.y === 0) newDirectionRef.current = { x: 0, y: 1 };
                     break;
                 case 'ArrowLeft':
-                    if (direction.x === 0) setNewDirection({ x: -1, y: 0 });
+                    if (directionRef.current.x === 0) newDirectionRef.current = { x: -1, y: 0 };
                     break;
                 case 'ArrowRight':
-                    if (direction.x === 0) setNewDirection({ x: 1, y: 0 });
+                    if (directionRef.current.x === 0) newDirectionRef.current = { x: 1, y: 0 };
                     break;
             }
         };
@@ -35,20 +41,21 @@ function SnakeGame() {
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [direction]);
+    }, []);
 
     useEffect(() => {
         const gameLoop = () => {
-            setDirection(newDirection);
-            const head = snake[0];
-            const newHead = { x: head.x + direction.x, y: head.y + direction.y };
-    
-            if (newHead.x < 0 || newHead.x >= boardSize || newHead.y < 0 || newHead.y >= boardSize || snake.some(part => part.x === newHead.x && part.y === newHead.y)) {
-                setSnake([{ x: 15, y: 15 }]);
-                setDirection({ x: 0, y: 0 });
-                setNewDirection({ x: 0, y: 0 });
+            directionRef.current = newDirectionRef.current;
+            const head = snakeRef.current[0];
+            const newHead = { x: head.x + directionRef.current.x, y: head.y + directionRef.current.y };
+
+            let newSnake = [...snakeRef.current];
+            if (newHead.x < 0 || newHead.x >= boardSize || newHead.y < 0 || newHead.y >= boardSize || snakeRef.current.some(part => part.x === newHead.x && part.y === newHead.y)) {
+                newSnake = [{ x: 15, y: 15 }];
+                directionRef.current = { x: 0, y: 0 };
+                newDirectionRef.current = { x: 0, y: 0 };
             } else {
-                const newSnake = [newHead, ...snake];
+                newSnake = [newHead, ...newSnake];
                 if (newHead.x === food.x && newHead.y === food.y) {
                     setFood({
                         x: Math.floor(Math.random() * boardSize),
@@ -57,18 +64,14 @@ function SnakeGame() {
                 } else {
                     newSnake.pop();
                 }
-                setSnake(newSnake);
             }
-    
+
+            setSnake(newSnake);
             setTimeout(gameLoop, 100);
         };
-    
+
         gameLoop();
-    
-        // Очистка таймера при размонтировании компонента
-        return () => clearTimeout(gameLoop);
-    }, []);
-    
+    }, [food]);
 
     return (
         <div id="game-board">
