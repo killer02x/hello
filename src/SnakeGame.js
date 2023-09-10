@@ -42,7 +42,7 @@ function SnakeGame() {
             setDirection(newDirection);
             const head = snake[0];
             const newHead = { x: head.x + direction.x, y: head.y + direction.y };
-
+    
             if (newHead.x < 0 || newHead.x >= boardSize || newHead.y < 0 || newHead.y >= boardSize || snake.some(part => part.x === newHead.x && part.y === newHead.y)) {
                 setSnake([{ x: 15, y: 15 }]);
                 setDirection({ x: 0, y: 0 });
@@ -59,12 +59,16 @@ function SnakeGame() {
                 }
                 setSnake(newSnake);
             }
-
+    
             setTimeout(gameLoop, 100);
         };
-
+    
         gameLoop();
-    }, [snake, direction, newDirection, food]);
+    
+        // Очистка таймера при размонтировании компонента
+        return () => clearTimeout(gameLoop);
+    }, []);
+    
 
     return (
         <div id="game-board">
