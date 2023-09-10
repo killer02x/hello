@@ -25,7 +25,7 @@ function App() {
 function MyButton() {
   return (
     <button>
-      Button
+      Change Button
     </button>
   );
 }
